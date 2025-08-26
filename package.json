@@ -1,31 +1,30 @@
 {
-  "name": "dev_package",
-  "private": true,
-  "version": "0.0.0",
-  "type": "module",
-"scripts": {
-  "dev": "vite",
-  "start": "vite --open",
-  "build": "vite build",
-  "lint": "eslint .",
-  "preview": "vite preview"
-}
-,
-  "dependencies": {
-    "@tailwindcss/vite": "^4.1.12",
-    "react": "^19.1.1",
-    "react-dom": "^19.1.1",
-    "tailwindcss": "^4.1.12"
+  "name": "devconnect",
+  "version": "1.0.0",
+  "description": "dev community",
+  "keywords": [
+    "nodejs",
+    "javascript",
+    "backend"
+  ],
+  "homepage": "https://github.com/RohitMaurya139/DevConnect-#readme",
+  "bugs": {
+    "url": "https://github.com/RohitMaurya139/DevConnect-/issues"
   },
-  "devDependencies": {
-    "@eslint/js": "^9.33.0",
-    "@types/react": "^19.1.10",
-    "@types/react-dom": "^19.1.7",
-    "@vitejs/plugin-react": "^5.0.0",
-    "eslint": "^9.33.0",
-    "eslint-plugin-react-hooks": "^5.2.0",
-    "eslint-plugin-react-refresh": "^0.4.20",
-    "globals": "^16.3.0",
-    "vite": "^7.1.2"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RohitMaurya139/DevConnect-.git"
+  },
+  "license": "ISC",
+  "author": "Rohit Maurya",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "dev":"nodemon src/app.js",
+    "start":"nodemon src/app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
   }
 }
