@@ -3,18 +3,11 @@ const connectDB = require("./config/database"); // Import custom database connec
 const User = require("./model/user"); // Import the User model for interacting with user documents in MongoDB
 
 const app = express(); // Create an Express application instance
-
+app.use(express.json())
 // Handle POST requests to /signup to create a new user
 app.post("/signup", async (req, res) => {
   // Create a new User instance with hardcoded data (ideally this should come from req.body)
-  const user = new User({
-    FirstName: "Vikky",
-    LastName: "Maurya",
-    age: 28,
-    email: "vikky675maurya@gmail.com",
-    password: "Vikky@1234",
-    gender: "Male",
-  });
+  const user = new User(req.body);
 
   try {
     // Save the user document to the database asynchronously
