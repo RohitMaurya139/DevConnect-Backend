@@ -1,62 +1,43 @@
-const express = require("express");
-const app = express();
+const express = require("express"); // Import express for creating the web server
+const connectDB = require("./config/database"); // Import custom database connection function for MongoDB
+const User = require("./model/user"); // Import the User model for interacting with user documents in MongoDB
 
-app.get(/^\/ab?c$/, (req, res) => {
-  res.send({
-    firstName: "Rocky",
-    lastName: "Maurya",
-    email: "rocky194maurya@gmail.com",
+const app = express(); // Create an Express application instance
+
+// Handle POST requests to /signup to create a new user
+app.post("/signup", async (req, res) => {
+  // Create a new User instance with hardcoded data (ideally this should come from req.body)
+  const user = new User({
+    FirstName: "Vikky",
+    LastName: "Maurya",
+    age: 28,
+    email: "vikky675maurya@gmail.com",
+    password: "Vikky@1234",
+    gender: "Male",
   });
+
+  try {
+    // Save the user document to the database asynchronously
+    await user.save();
+    // Send success response if save is successful
+    res.send("User Account Created successfully");
+  } catch (err) {
+    // Catch DB errors or validation errors and send failure message
+    res.status(400).send("Something went Wrong!!!! Error: "+ err.message);
+  }
 });
-app.get(/^\/ab+c$/, (req, res) => {
-  res.send({
-    firstName: "Prem",
-    lastName: "Maurya",
-    email: "prem098maurya@gmail.com",
+
+// Connect to the MongoDB database and then start the server
+connectDB()
+  .then(() => {
+    // Log database connection success
+    console.log("Database Connected successfully");
+    // Start the Express server listening on port 3000
+    app.listen(3000, () => {
+      console.log("server successfully listening on port 3000");
+    });
+  })
+  .catch((err) => {
+    // Log database connection failure error
+    console.error("Database Connection Unsuccessful");
   });
-});
-app.get(/^\/ab.*cd$/, (req, res) => {
-  res.send({
-    firstName: "Akky",
-    lastName: "Maurya",
-    email: "akky456maurya@gmail.com",
-  });
-});
-
-app.get(/^\/a(bc)?d$/, (req, res) => {
-  res.send({
-    firstName: "gkky",
-    lastName: "Maurya",
-    email: "akky456maurya@gmail.com",
-  });
-});
-
-app.get("/user/:userId", (req, res) => {
-    console.log(req.params)
-    // console.log(req.query)
-  res.send({
-    firstName: "Rohit",
-    lastName: "Maurya",
-    email: "rohit139maurya@gmail.com", // fixed typo "emsil"
-  });
-});
-
-app.post("/user", (req, res) => {
-  console.log("Saved data to the database");
-  res.send("Data successfully saved to database");
-});
-
-app.delete("/user", (req, res) => {
-  res.send("Deleted successfully from database");
-});
-
-// Use app.get here if you want to handle only GET requests on /test
-app.get("/test", (req, res) => {
-  res.send("Hello From test");
-});
-
-// Removed app.use("/user") middleware that conflicts with user routes
-
-app.listen(3000, () => {
-  console.log("server successfully listening on port 3000");
-});
