@@ -1,15 +1,70 @@
 const mongoose = require("mongoose"); // Import mongoose library for MongoDB interactions
 const { Schema } = mongoose; // Destructure Schema constructor from mongoose
-
+const validator = require("validator");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const { body, validationResult } = require("express-validator");
 // Define the schema for User collection
-const userSchema = new Schema({
-  FirstName: String, // User's first name (String type)
-  LastName: String, // User's last name (String type)
-  age: Number, // User's age (Number type)
-  email: String, // User's email address (String type)
-  password: String, // User's password (String type)
-  gender: String, // User's gender (String type)
-});
+const userSchema = new Schema(
+  {
+    FirstName: {
+      type: String,
+      required: true,
+      minLength: 3,
+      maxLength: 10,
+      trim: true,
+    },
+    LastName: { type: String, trim: true },
+    age: { type: Number, required: true, min: 18, max: 90 },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+      trim: true,
+      validate(value) {
+        if (!validator.isEmail(value)) {
+          throw new Error("Invalid Email Address");
+        }
+      },
+    },
+      skills: {
+    type: [String],
+    validate: {
+      validator: function (arr) {
+        return arr.length >= 1 && arr.length <= 15;  // Example: minimum 2, maximum 5 items
+      },
+      message: 'Skills must have At least one or At Max. 15 ',
+    },
+  },
+
+    password: {
+      type: String,
+      required: true,
+      validate(value) {
+        if (!validator.isStrongPassword(value)) {
+          throw new Error(
+            "Password is weak. try some strong password which contain { minLength: 8, minLowercase: 1, minUppercase: 1, minNumbers: 1, minSymbols: 1}"
+          );
+        }
+      },
+    },
+    gender: { type: String, enum: ["Male", "Female", "Other"], required: true },
+  },
+  { timestamps: true }
+);
+
+userSchema.methods.getJET = async function () {
+  const user = this;
+  const token = await jwt.sign({ _id: user._id }, "Dev@45Connect170804", { expiresIn: "1d" });
+  return token
+}
+userSchema.methods.validatePassword = async function (password) {
+  const user = this;
+   const isPasswordCorrect = await bcrypt.compare(password, user.password); // Compare password hashes
+  return isPasswordCorrect;
+}
+
 
 // Create the User model which interacts with the 'users' collection in MongoDB
 const User = mongoose.model("User", userSchema);
