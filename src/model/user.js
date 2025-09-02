@@ -3,7 +3,6 @@ const { Schema } = mongoose; // Destructure Schema constructor from mongoose
 const validator = require("validator");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const { body, validationResult } = require("express-validator");
 // Define the schema for User collection
 const userSchema = new Schema(
   {
@@ -54,7 +53,7 @@ const userSchema = new Schema(
   { timestamps: true }
 );
 
-userSchema.methods.getJET = async function () {
+userSchema.methods.getJWT = async function () {
   const user = this;
   const token = await jwt.sign({ _id: user._id }, "Dev@45Connect170804", { expiresIn: "1d" });
   return token
@@ -67,7 +66,7 @@ userSchema.methods.validatePassword = async function (password) {
 
 
 // Create the User model which interacts with the 'users' collection in MongoDB
-const User = mongoose.model("User", userSchema);
+const User = new mongoose.model("User", userSchema);
 
 // Export the User model to be used in other parts of the application
 module.exports = User;
