@@ -52,7 +52,8 @@ authRouter.post("/login", async (req, res) => {
       // Set JWT as a cookie, HTTP only, expires in 1 day
       res.cookie("token", token);
 
-      res.send("Login Successful");
+      res.json({ message: "Login Successfully", data: user })
+      
     } else {
       throw new Error("Password incorrect!!!!");
     }

@@ -27,15 +27,28 @@ const userSchema = new Schema(
         }
       },
     },
-      skills: {
-    type: [String],
-    validate: {
-      validator: function (arr) {
-        return arr.length >= 1 && arr.length <= 15;  // Example: minimum 2, maximum 5 items
-      },
-      message: 'Skills must have At least one or At Max. 15 ',
+    profileImg: {
+      type: String,
+      default: "https://img.daisyui.com/images/profile/demo/gordon@192.webp", 
+      trim: true,
     },
-  },
+    about: {
+      type: String,
+      default: "Hello i am new to Dev connect",
+      trim: true,
+      minLength: 0,
+      maxLength: 100,
+    },
+
+    skills: {
+      type: [String],
+      validate: {
+        validator: function (arr) {
+          return arr.length >= 1 && arr.length <= 15; // Example: minimum 2, maximum 5 items
+        },
+        message: "Skills must have At least one or At Max. 15 ",
+      },
+    },
 
     password: {
       type: String,

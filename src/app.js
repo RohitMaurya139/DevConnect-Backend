@@ -5,17 +5,23 @@ const express = require("express");
 const authRouter = require("./routes/auth"); // Handles routes like /signup, /login
 const profileRouter = require("./routes/profile"); // Handles profile-related routes
 const requestRouter = require("./routes/request"); // Handles request-related routes
-
+const cors=require("cors")
 // Import middleware to parse cookies from HTTP requests
 const cookieParser = require("cookie-parser");
 
 // Import the custom function to connect to MongoDB
 const connectDB = require("./config/database");
-
-
+const userRouter = require("./routes/user");
 // Create an Express application instance
 const app = express();
-
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+    methods: ["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 // Add middleware to parse JSON bodies from incoming API requests
 app.use(express.json());
 
@@ -30,6 +36,7 @@ app.use("/", profileRouter);
 
 // Mount request router at root path; handles endpoints like /request, /friend-request
 app.use("/", requestRouter);
+app.use("/", userRouter);
 
 // Connect to MongoDB, then start the server on port 3000 upon successful connection
 connectDB()
