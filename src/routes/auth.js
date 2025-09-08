@@ -26,9 +26,11 @@ authRouter.post("/signup", async (req, res) => {
       gender,
       skills,
     });
-
-    await user.save(); // Save user to MongoDB
-    res.send("User Account Created successfully");
+      
+    const savedUser = await user.save(); // Save user to MongoDB
+    const token = await user.getJWT();
+    res.cookie("token",token,)
+    res.json({ message: "User Account Created successfully",data:savedUser });
   } catch (err) {
     // Catch validation or database errors
     res.status(400).send("Something went Wrong!!!! Error: " + err.message);

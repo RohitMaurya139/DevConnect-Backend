@@ -58,7 +58,7 @@ userRouter.get("/user/feed", UserAuth,async(req, res)=> {
   try {
     const loggedInUser = req.user;
     const page = parseInt(req.query.page) || 1;
-    let limit = parseInt(req.query.limit) || 10;
+    let limit = parseInt(req.query.limit) || 20;
     limit = limit > 30 ? 30 : limit;
     const skip = (page - 1) * limit;
     const hideConnectionRequest = await connectionRequest
