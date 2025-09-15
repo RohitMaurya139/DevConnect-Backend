@@ -14,6 +14,7 @@ const connectDB = require("./config/database");
 const userRouter = require("./routes/user");
 // Create an Express application instance
 const app = express();
+app.options("*", cors());
 app.use(
   cors({
     origin:
