@@ -17,7 +17,7 @@ const app = express();
 app.use(
   cors({
     origin:
-      "https://dev-connect-client-mu.vercel.app/",
+      "https://dev-connect-client-mu.vercel.app",
     credentials: true,
     methods: ["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
