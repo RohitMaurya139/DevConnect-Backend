@@ -14,16 +14,16 @@ const connectDB = require("./config/database");
 const userRouter = require("./routes/user");
 // Create an Express application instance
 const app = express();
-app.options("*", cors());
 app.use(
   cors({
-    origin:
-      "https://dev-connect-client-mu.vercel.app",
+    origin: "https://dev-connect-client-mu.vercel.app",
     credentials: true,
     methods: ["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
+app.options("*", cors());
+
 // Add middleware to parse JSON bodies from incoming API requests
 app.use(express.json());
 
