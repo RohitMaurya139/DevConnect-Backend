@@ -1,7 +1,6 @@
 // Import Express for building the web server
 const express = require("express");
 require("dotenv").config();
-
 // Import application routers for authentication, profile, and requests
 const authRouter = require("./routes/auth"); // Handles routes like /signup, /login
 const profileRouter = require("./routes/profile"); // Handles profile-related routes
@@ -17,7 +16,7 @@ const userRouter = require("./routes/user");
 const app = express();
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: "http://localhost:5174",
     credentials: true,
     methods: ["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
@@ -44,8 +43,8 @@ connectDB()
   .then(() => {
     console.log("Database Connected successfully");
     // Start listening for incoming requests on port 3000
-    app.listen(process.env.PORT, () => {
-      console.log(`server successfully listening on port ${process.env.PORT}`);
+    app.listen(process.env.VITE_PORT, () => {
+      console.log(`server successfully listening on port ${process.env.VITE_PORT}`);
     });
   })
   .catch((err) => {
