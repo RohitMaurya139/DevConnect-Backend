@@ -6,7 +6,7 @@ const jwt = require("jsonwebtoken");
      if (!token) {
        throw new Error("Token is Invalid !!! Please login again")
      }
-     const decodeObj = await jwt.verify(token, "Dev@45Connect170804");
+     const decodeObj = await jwt.verify(token, process.env.JWT_SECRET);
      const { _id } = decodeObj
      const user = await User.findById(_id)
      if (!user) {
