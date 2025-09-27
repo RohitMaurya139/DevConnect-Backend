@@ -11,35 +11,36 @@ const connectDB = require("./config/database");
 
 const app = express();
 
-// Configure CORS options
+// ✅ Correct CORS options
 const corsOptions = {
-  origin: "https://dev-connect-client-mu.vercel.app",
-  credentials: true,
-  methods: ["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"],
+  origin: [
+    "https://dev-connect-client-mu.vercel.app", // your frontend
+    "http://localhost:5173", // local dev (Vite default)
+  ],
+  credentials: true, // allow cookies/headers
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
   allowedHeaders: ["Content-Type", "Authorization"],
 };
 
-// Use CORS middleware with options
 app.use(cors(corsOptions));
-
-// For handling OPTIONS preflight requests for all routes
-app.options("*", cors(corsOptions));
+app.options("*", cors(corsOptions)); // preflight
 
 app.use(express.json());
 app.use(cookieParser());
 
+// Routes
 app.use("/", authRouter);
 app.use("/", profileRouter);
 app.use("/", requestRouter);
 app.use("/", userRouter);
 
+// DB connection
 connectDB()
   .then(() => {
     console.log("Database Connected successfully");
-    app.listen(process.env.VITE_PORT, () => {
-      console.log(
-        `server successfully listening on port ${process.env.VITE_PORT}`
-      );
+    const PORT = process.env.VITE_PORT || 5000;
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
     });
   })
   .catch((err) => {

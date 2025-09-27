@@ -1,19 +1,27 @@
-const express = require("express")
+const express = require("express");
 const bcrypt = require("bcryptjs");
 const User = require("../model/user");
-const {validateUserData} = require("../utils/validation");
+const { validateUserData } = require("../utils/validation");
 
-const authRouter = express.Router()
+const authRouter = express.Router();
 
+// ✅ Cookie options for cross-origin (Vercel <-> Render)
+const cookieOptions = {
+  httpOnly: true, // Not accessible by JS
+  secure: true, // Needed for HTTPS
+  sameSite: "None", // Allow cross-origin cookies
+  maxAge: 24 * 60 * 60 * 1000, // 1 day
+};
+
+// -------------------- SIGNUP --------------------
 authRouter.post("/signup", async (req, res) => {
   try {
     validateUserData(req); // Validate incoming user data
 
-    // Destructure user details from request body
     const { FirstName, LastName, email, password, gender, age, skills } =
       req.body;
 
-    // Hash password asynchronously with bcrypt
+    // Hash password
     const passwordHash = await bcrypt.hash(password, 10);
 
     // Create new user document
@@ -22,51 +30,54 @@ authRouter.post("/signup", async (req, res) => {
       LastName,
       email,
       age,
-      password: passwordHash, // Store hashed password
+      password: passwordHash,
       gender,
       skills,
     });
-      
-    const savedUser = await user.save(); // Save user to MongoDB
+
+    const savedUser = await user.save();
+
+    // Create JWT
     const token = await user.getJWT();
-    res.cookie("token",token,)
-    res.json({ message: "User Account Created successfully",data:savedUser });
+
+    // Set token as cookie
+    res.cookie("token", token, cookieOptions);
+
+    res.json({ message: "User Account Created successfully", data: savedUser });
   } catch (err) {
-    // Catch validation or database errors
     res.status(400).send("Something went Wrong!!!! Error: " + err.message);
   }
 });
 
+// -------------------- LOGIN --------------------
 authRouter.post("/login", async (req, res) => {
   try {
-    const { email, password } = req.body; // Extract login credentials
+    const { email, password } = req.body;
 
-    const user = await User.findOne({ email: email }); // Find user by email
-    if (!user) {
-      throw new Error("User Not Found !!!");
-    }
+    // Check if user exists
+    const user = await User.findOne({ email });
+    if (!user) throw new Error("User Not Found !!!");
 
-    const isPasswordCorrect = await user.validatePassword(password); // Compare password hashes
-    if (isPasswordCorrect) {
-      // Sign a JWT with user ID as payload
-      const token = await user.getJWT();
+    // Validate password
+    const isPasswordCorrect = await user.validatePassword(password);
+    if (!isPasswordCorrect) throw new Error("Password incorrect!!!!");
 
-      // Set JWT as a cookie, HTTP only, expires in 1 day
-      res.cookie("token", token);
+    // Create JWT
+    const token = await user.getJWT();
 
-      res.json({ message: "Login Successfully", data: user })
-      
-    } else {
-      throw new Error("Password incorrect!!!!");
-    }
+    // Set token as cookie
+    res.cookie("token", token, cookieOptions);
+
+    res.json({ message: "Login Successfully", data: user });
   } catch (err) {
-    // Return error if login fails
     res.status(400).send("Error : " + err.message);
   }
 });
-authRouter.post("/logout",async (req, res) => {
-    res.cookie("token", null, { expires: new Date(Date.now()) });
-    res.send(" Logout SuccessFully")
-})
+
+// -------------------- LOGOUT --------------------
+authRouter.post("/logout", async (req, res) => {
+  res.cookie("token", null, { ...cookieOptions, maxAge: 0 });
+  res.send("Logout Successfully");
+});
 
 module.exports = authRouter;
